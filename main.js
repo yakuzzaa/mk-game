@@ -1,4 +1,6 @@
+const $arenas = document.querySelector('.arenas');
 player1 = {
+    player: 1,
     name: "Scorpion",
     hp:100,
     img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
@@ -9,6 +11,7 @@ player1 = {
 }
 
 player2 = {
+    player: 2,
     name: "Subzero",
     hp:100,
     img: "http://reactmarathon-api.herokuapp.com/assets/subzero.gif",
@@ -18,21 +21,25 @@ player2 = {
     },
 }
 
+function createElement(tag, className){
+    const $tag = document.createElement(tag);
+    if (className){
+        $tag.classList.add(className);
+    }
+    return $tag;
+}
 
-function CreatePlayer(classPlayer,objectPlayer){
-    const $arenas = document.querySelector('.arenas');
-    const $player = document.createElement('div');
-    const $progressbar = document.createElement('div');
-    const $character = document.createElement('div');
-    const $image1 = document.createElement('img');
-    const $life = document.createElement('div');
-    const $name = document.createElement('div');
 
-    $life.classList.add('life');
-    $player.classList.add(classPlayer);
-    $progressbar.classList.add('progressbar');
-    $character.classList.add('character');
-    $name.classList.add('name');
+
+function CreatePlayer(objectPlayer){
+    const $player = createElement('div','player'+objectPlayer.player);
+    const $progressbar = createElement('div','progressbar');
+    const $character = createElement('div','character');
+    const $image1 = createElement('img');
+    const $life = createElement('div','life');
+    const $name = createElement('div','name');
+
+
     $image1.src = objectPlayer.img;
     $life.style.width= '100%';
     $name.innerText = objectPlayer.name;
@@ -44,12 +51,12 @@ function CreatePlayer(classPlayer,objectPlayer){
     $progressbar.appendChild($name);
     $character.appendChild($image1);
 
-    $arenas.appendChild($player);
+    return $player;
 
 }
+$arenas.appendChild(CreatePlayer(player1));
+$arenas.appendChild(CreatePlayer(player2));
 
-CreatePlayer('player1',player1);
-CreatePlayer('player2',player2);
 
 
 
