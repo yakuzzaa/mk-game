@@ -1,5 +1,6 @@
 const $arenas = document.querySelector('.arenas');
 const $randomButton = document.querySelector('.button');
+//player objects
 player1 = {
     player: 1,
     name: "Scorpion",
@@ -9,6 +10,7 @@ player1 = {
     attack: function (){
         console.log(name + "Fight...")
     },
+    lose: false,
 }
 
 player2 = {
@@ -20,8 +22,9 @@ player2 = {
     attack: function (){
         console.log(name + "Fight...")
     },
+    lose:false,
 }
-
+//function for creating DOM element with class
 function createElement(tag, className){
     const $tag = document.createElement(tag);
     if (className){
@@ -29,9 +32,7 @@ function createElement(tag, className){
     }
     return $tag;
 }
-
-
-
+//function for creating player model
 function CreatePlayer(objectPlayer){
     const $player = createElement('div','player'+objectPlayer.player);
     const $progressbar = createElement('div','progressbar');
@@ -57,30 +58,63 @@ function CreatePlayer(objectPlayer){
 
 function playerLose(name){
     const $loseTitle = createElement('div','loseTitle');
-    $loseTitle.innerText = name + ' lose';
+    $loseTitle.innerText = name + ' wins';
 
     return $loseTitle;
 }
 
+//function that changing life at player models
 
 function changeHp(player){
     const $playerLife = document.querySelector('.player'+ player.player + ' .life');
-    player.hp -=20;
-    $playerLife.style.width = player.hp +'%';
+    if (player.hp <= 0){
+        player.hp = 0;
+        player.lose = true;
+        //$arenas.appendChild(playerLose(player.name));
+        $randomButton.disabled =true;
 
-    if (player.hp <0){
-       $arenas.appendChild(playerLose(player.name));
+
+
     }
+    else{
+        player.hp -= Math.floor(Math.random()*20);
+        if (player.hp <=0){
+            player.hp = 0;
+            player.lose = true
+            //$arenas.appendChild(playerLose(player.name))
+            $randomButton.disabled =true;
+        }
+
+    }
+    console.log(player.hp);
+    $playerLife.style.width = player.hp +'%';
 }
-$randomButton.addEventListener('click', function (){
-    console.log("Running");
+//function for checking who is winner in game session
+function checkingWhoWinner(player1,player2){
     changeHp(player1);
     changeHp(player2);
+    if (player1.lose === true){
+        $arenas.appendChild(playerLose(player2.name));
+        //$randomButton.disabled =true;
+    }
+    else if (player2.lose === true){
+        $arenas.appendChild(playerLose(player1.name));
+        //$randomButton.disabled =true;
+    }
+    else{
+
+    }
+
+}
+// test button
+$randomButton.addEventListener('click', function (){
+    console.log("Running");
+    checkingWhoWinner(player1,player2);
 })
 $arenas.appendChild(CreatePlayer(player1));
 $arenas.appendChild(CreatePlayer(player2));
 
-
+//поменять функцию playerLose на playerWins
 
 
 
