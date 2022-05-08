@@ -61,15 +61,15 @@ function CreatePlayer(objectPlayer){
 }
 
 function playerWins(name){
-    const $loseTitle = createElement('div','loseTitle');
+    const $wonTitle = createElement('div','wonTitle');
     if (name){
-        $loseTitle.innerText = name + ' wins';
+        $wonTitle.innerText = name + ' wins';
     }
     else{
-        $loseTitle.innerText = 'draw';
+        $wonTitle.innerText = 'draw';
     }
 
-    return $loseTitle;
+    return $wonTitle;
 }
 //random function for changing player life
 function GetRandom(size){
@@ -108,16 +108,15 @@ function changeHp(change){
 }
 //function for creating variable for $playerLife dom element
 function elHp(){
-    const $playerLife = document.querySelector('.player'+ this.player + ' .life');
-    return $playerLife;
+    return document.querySelector('.player'+ this.player + ' .life');
 }
 //function for render change in hp
-function renderHp(response){
-    response.style.width = this.hp +'%';
+function renderHp(){
+    return this.elHp().style.width = this.hp +'%';
 }
 
 //function for adding button for window reload
-function CreateReloadButton(){
+function createReloadButton(){
     const $reloadWrap =createElement('div','reloadWrap');
     const $reloadButton = createElement('button', 'button');
     $reloadButton.innerText ='Restart';
@@ -138,21 +137,21 @@ $randomButton.addEventListener('click', function (){
     // player1.elHp();
     // player2.elHp();
     player1.changeHp(GetRandom(20));
-    player1.renderHp(player1.elHp());
+    player1.renderHp();
     player2.changeHp(GetRandom(20));
-    player2.renderHp(player2.elHp());
+    player2.renderHp();
     if (player1.hp === 0 || player2.hp ===0){
         if (player1.hp === 0 && player1.hp < player2.hp){
             $arenas.appendChild(playerWins(player2.name));
-            CreateReloadButton();
+            createReloadButton();
         }
         else if (player2.hp === 0 && player2.hp < player1.hp){
             $arenas.appendChild(playerWins(player1.name));
-            CreateReloadButton();
+            createReloadButton();
         }
         else if (player1.hp === 0 && player2.hp === 0){
             $arenas.appendChild(playerWins());
-            CreateReloadButton();
+            createReloadButton();
         }
         $randomButton.disabled =true;
     }
