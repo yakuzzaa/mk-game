@@ -7,6 +7,9 @@ player1 = {
     hp:100,
     img: "http://reactmarathon-api.herokuapp.com/assets/scorpion.gif",
     weapon: ['kunai'],
+    changeHp: changeHp,
+    elHp: elHp,
+    renderHp: renderHp,
     attack: function (){
         console.log(name + "Fight...")
     },
@@ -18,6 +21,9 @@ player2 = {
     hp:100,
     img: "http://reactmarathon-api.herokuapp.com/assets/subzero.gif",
     weapon: ['frozen sword'],
+    changeHp: changeHp,
+    elHp: elHp,
+    renderHp: renderHp,
     attack: function (){
         console.log(name + "Fight...")
     },
@@ -69,30 +75,84 @@ function playerWins(name){
 function GetRandom(size){
     return Math.floor(Math.random()*size);
 }
-//function that changing life at player models
-function changeHp(player){
-    const $playerLife = document.querySelector('.player'+ player.player + ' .life');
-    player.hp -=GetRandom(20);
-    if (player.hp <= 0){
-        player.hp = 0;
-    }
-    $playerLife.style.width = player.hp +'%';
+function getRandomArbitrary(min, max) {
+    return Math.floor(Math.random() * (max - min) + min);
 }
+//function that changing life at player models
+// function changeHp(player,changeHp){
+//     const $playerLife = document.querySelector('.player'+ player.player + ' .life');
+//     const solution = getRandomArbitrary(0,2);
+//     console.log(solution);
+//     if (solution === 0){
+//
+//     }
+//     else{
+//         player.hp -=changeHp;
+//         if (player.hp <= 0){
+//             player.hp = 0;
+//         }
+//     }
+//     console.log(player.hp);
+//     $playerLife.style.width = player.hp +'%';
+// }
+
+//function that decides how much hp points to subtract
+function changeHp(change){
+    const solution = getRandomArbitrary(0,2);
+    if (solution > 0){
+        this.hp -= change;
+        if (this.hp <= 0){
+            this.hp = 0;
+        }
+    }
+}
+//function for creating variable for $playerLife dom element
+function elHp(){
+    const $playerLife = document.querySelector('.player'+ this.player + ' .life');
+    return $playerLife;
+}
+//function for render change in hp
+function renderHp(response){
+    response.style.width = this.hp +'%';
+}
+
+//function for adding button for window reload
+function CreateReloadButton(){
+    const $reloadWrap =createElement('div','reloadWrap');
+    const $reloadButton = createElement('button', 'button');
+    $reloadButton.innerText ='Restart';
+    $reloadWrap.appendChild($reloadButton);
+    $arenas.appendChild($reloadWrap);
+    $reloadButton.addEventListener('click', function(){
+        window.location.reload();
+    })
+}
+
+
+
+
 
 // test button
 $randomButton.addEventListener('click', function (){
     //checkingWhoWinner(player1,player2);
-    changeHp(player1);
-    changeHp(player2);
+    // player1.elHp();
+    // player2.elHp();
+    player1.changeHp(GetRandom(20));
+    player1.renderHp(player1.elHp());
+    player2.changeHp(GetRandom(20));
+    player2.renderHp(player2.elHp());
     if (player1.hp === 0 || player2.hp ===0){
         if (player1.hp === 0 && player1.hp < player2.hp){
             $arenas.appendChild(playerWins(player2.name));
+            CreateReloadButton();
         }
         else if (player2.hp === 0 && player2.hp < player1.hp){
             $arenas.appendChild(playerWins(player1.name));
+            CreateReloadButton();
         }
         else if (player1.hp === 0 && player2.hp === 0){
             $arenas.appendChild(playerWins());
+            CreateReloadButton();
         }
         $randomButton.disabled =true;
     }
