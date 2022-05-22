@@ -1,5 +1,4 @@
 const $arenas = document.querySelector('.arenas');
-//const $randomButton = document.querySelector('.button');
 const $formFight = document.querySelector('.control');
 
 const HIT = {
@@ -116,23 +115,6 @@ function getRandomArbitrary(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-//function that changing life at player models
-// function changeHp(player,changeHp){
-//     const $playerLife = document.querySelector('.player'+ player.player + ' .life');
-//     const solution = getRandomArbitrary(0,2);
-//     console.log(solution);
-//     if (solution === 0){
-//
-//     }
-//     else{
-//         player.hp -=changeHp;
-//         if (player.hp <= 0){
-//             player.hp = 0;
-//         }
-//     }
-//     console.log(player.hp);
-//     $playerLife.style.width = player.hp +'%';
-// }
 
 //function for adding button for window reload
 function createReloadButton(){
@@ -146,32 +128,6 @@ function createReloadButton(){
     })
 }
 
-// button for randomize damage
-// $randomButton.addEventListener('click', function (){
-//     //checkingWhoWinner(player1,player2);
-//     // player1.elHp();
-//     // player2.elHp();
-//     player1.changeHp(GetRandom(20));
-//     player1.renderHp();
-//     player2.changeHp(GetRandom(20));
-//     player2.renderHp();
-//     if (player1.hp === 0 || player2.hp ===0){
-//         if (player1.hp === 0 && player1.hp < player2.hp){
-//             $arenas.appendChild(playerWins(player2.name));
-//             createReloadButton();
-//         }
-//         else if (player2.hp === 0 && player2.hp < player1.hp){
-//             $arenas.appendChild(playerWins(player1.name));
-//             createReloadButton();
-//         }
-//         else if (player1.hp === 0 && player2.hp === 0){
-//             $arenas.appendChild(playerWins());
-//             createReloadButton();
-//         }
-//         $randomButton.disabled =true;
-//     }
-//
-// })
 
 function enemyAttack(){
     const hit = ATTACK[getRandom(3)];
@@ -202,20 +158,36 @@ function checker(){
     }
 }
 
+/**
+ * Функция каоторая формирует парамаетры защиты и атаки игрока
+ * @param $formFight
+ * @returns {{hit: string, defence: string, value: number}}
+ */
+function playerAttack($formFight){
+    const attack = {
+        value: 0,
+        hit: "",
+        defence: "",
+    };
+    if ($formFight){
+        for (let item of $formFight){
+            if (item.checked ===true && item.name === 'hit'){
+                attack.value = getRandom(HIT[item.value]);
+                attack.hit = item.value;
+            }
+            if (item.checked ===true && item.name === 'defence'){
+                attack.defence = item.value;
+            }
+            item.checked = false;
+        }
+    }
+
+    return attack;
+}
 $formFight.addEventListener('submit',function (e){
     e.preventDefault();
     const enemy = enemyAttack();
-    const attack = {};
-    for(let item of $formFight){
-        if (item.checked ===true && item.name === 'hit'){
-            attack.value = getRandom(HIT[item.value]);
-            attack.hit = item.value;
-        }
-        if (item.checked ===true && item.name === 'defence'){
-            attack.defence = item.value;
-        }
-        item.checked = false;
-    };
+    const attack = playerAttack($formFight);
     console.log("enemy attack:", enemy.hit,enemy.value,"enemy defence", enemy.defence);
     console.log("i attack:", attack.hit,attack.value, "i defence", attack.defence);
     if (enemy.hit !== attack.defence){
