@@ -183,12 +183,28 @@ function enemyAttack(){
     }
 }
 
+// проверяет у кого из игроков нулевое здоровье и выводит сообщение о выйгрыше игрока
+function checker(){
+    if (player1.hp === 0 || player2.hp ===0){
+        if (player1.hp === 0 && player1.hp < player2.hp){
+            $arenas.appendChild(playerWins(player2.name));
+            createReloadButton();
+        }
+        else if (player2.hp === 0 && player2.hp < player1.hp){
+            $arenas.appendChild(playerWins(player1.name));
+            createReloadButton();
+        }
+        else if (player1.hp === 0 && player2.hp === 0){
+            $arenas.appendChild(playerWins());
+            createReloadButton();
+        }
+        $randomButton.disabled =true;
+    }
+}
 
 $formFight.addEventListener('submit',function (e){
     e.preventDefault();
-    console.dir($formFight);
     const enemy = enemyAttack();
-
     const attack = {};
     for(let item of $formFight){
         if (item.checked ===true && item.name === 'hit'){
@@ -199,9 +215,21 @@ $formFight.addEventListener('submit',function (e){
             attack.defence = item.value;
         }
         item.checked = false;
+    };
+    console.log("enemy attack:", enemy.hit,enemy.value,"enemy defence", enemy.defence);
+    console.log("i attack:", attack.hit,attack.value, "i defence", attack.defence);
+    if (enemy.hit !== attack.defence){
+        player1.changeHp(enemy.value);
+        player1.renderHp();
     }
-    console.log("a:",attack);
-    console.log("e:",enemy);
+    if (attack.hit !== enemy.defence){
+        player2.changeHp(attack.value);
+        player2.renderHp();
+    }
+
+   checker();
+
+
 })
 
 
