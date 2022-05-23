@@ -7,7 +7,7 @@ const HIT = {
     foot: 20,
 }
 const ATTACK = ['head', 'body', 'foot'];
-const logs = {
+const LOGS = {
     start: 'Часы показывали [time], когда [player1] и [player2] бросили вызов друг другу.',
     end: [
         'Результат удара [playerWins]: [playerLose] - труп',
@@ -47,7 +47,6 @@ const logs = {
     draw: 'Ничья - это тоже победа!'
 };
 
-
 //player objects
 player1 = {
     player: 1,
@@ -80,13 +79,10 @@ function attack(){
 
 //function that decides how much hp points to subtract
 function changeHp(change){
-    const solution = getRandomArbitrary(0,2);
-    if (solution > 0){
-        this.hp -= change;
-        if (this.hp <= 0){
-            this.hp = 0;
+    this.hp -= change;
+    if (this.hp <= 0){
+        this.hp = 0;
         }
-    }
 }
 
 //function for creating variable for $playerLife dom element
@@ -225,29 +221,54 @@ function playerAttack($formFight){
     return attack;
 }
 
+/**
+ * Возвращаем текущее время
+ * @returns {string}
+ */
+const getTime = () =>{
+    const date = new Date();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const formattedDate = `${hours < 10 ? `0${hours}`:hours}:${minutes < 10 ? `0${minutes}`:minutes}:${seconds < 10 ? `0${seconds}`:seconds} `;
+    return formattedDate;
+}
 
-function  generateLogs(type,player1,player2){
+/**
+ * генерируем логи игры
+ * @param type тип лога
+ * @param player1 атакующий игрок
+ * @param player2 игрок, получающий урон
+ * @param damage урон
+ */
+function  generateLogs(type,player1,player2,damage){
     let text;
+    let el;
+    const formattedDate = getTime();
     switch(type){
         case 'hit':
-            text = logs[type][getRandom(type.length)].replace('[playerKick]',player1.name).replace('[playerDefence]',player2.name);
+            text = LOGS[type][getRandom(type.length)].replace('[playerKick]',player1.name).replace('[playerDefence]',player2.name);
+            el = `<p>${formattedDate}${text} -${damage.value} [${player2.hp}/100]</p>`;
             break;
         case 'defence':
-            text = logs[type][getRandom(type.length)].replace('[playerKick]',player1.name).replace('[playerDefence]',player2.name);
+            text = LOGS[type][getRandom(type.length)].replace('[playerKick]',player1.name).replace('[playerDefence]',player2.name);
+            el = `<p>${formattedDate}${text}</p>`;
             break;
         case 'start':
-            const date = ''+new Date().getHours() +':' + ''+new Date().getMinutes();
-            text = logs[type].replace('[time]',date).replace('[player1]', player1.name). replace('[player2]',player2.name);
+            text = LOGS[type].replace('[time]',formattedDate).replace('[player1]', player1.name). replace('[player2]',player2.name);
+            el = `<p>${text}</p>`;
             break;
         case 'end':
-            text = logs[type][getRandom(type.length)].replace('[playerWins]',player1.name).replace('[playerLose]', player2.name);
+            text = LOGS[type][getRandom(type.length)].replace('[playerWins]',player1.name).replace('[playerLose]', player2.name);
+            el = `<p>${formattedDate}${text}</p>`;
             break;
         default:
-            text = logs['draw'];
+            text = LOGS['draw'];
     }
-    const el = `<p>${text}</p>`;
+
     $chat.insertAdjacentHTML("afterbegin",el);
 }
+//Старт игры
 generateLogs('start',player1,player2);
 $formFight.addEventListener('submit',function (e){
     e.preventDefault();
@@ -258,14 +279,14 @@ $formFight.addEventListener('submit',function (e){
     if (enemy.hit !== attack.defence){
         player1.changeHp(enemy.value);
         player1.renderHp();
-        generateLogs('hit',player2,player1);
+        generateLogs('hit',player2,player1,enemy);
     }else if(enemy.hit === attack.defence){
         generateLogs('defence',player2,player1);
     }
     if (attack.hit !== enemy.defence){
         player2.changeHp(attack.value);
         player2.renderHp();
-        generateLogs('hit',player1,player2);
+        generateLogs('hit',player1,player2,attack);
     }else if(attack.hit === enemy.defence){
         generateLogs('defence',player1,player2);
     }
